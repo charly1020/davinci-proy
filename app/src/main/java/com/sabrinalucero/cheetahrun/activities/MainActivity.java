@@ -47,17 +47,17 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    Toast.makeText(this, "Called", Toast.LENGTH_LONG).show();
+    //Toast.makeText(this, "Called", Toast.LENGTH_LONG).show();
 
    // esto para pasar con un boton de main al mapa
-    btn = (Button)findViewById(R.id.buttonMap);
+    /*btn = (Button)findViewById(R.id.buttonMap);
     btn.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
         startActivity(intent);
       }
-    });
+    });*/
 
 
 
@@ -77,24 +77,23 @@ public class MainActivity extends AppCompatActivity {
     switch (item.getItemId()){
       case R.id.menu_logout:
         logOut();
-        return true;
+        break;
       case R.id.menu_forget_logout:
         Util.removeSharedPreferences(prefs);
         logOut();
-        return true;
+        break;
       case R.id.menu_welcome:
 
         currentFragment = new WelcomeFragment();
 
-        return true;
+        break;
       case R.id.menu_map:
         currentFragment = new MapFragment();
-        return true;
+        break;
     }
 
-        changeFragment(currentFragment);
-        return super.onOptionsItemSelected(item);
-
+    changeFragment(currentFragment);
+    return super.onOptionsItemSelected(item);
   }
 
   private void changeFragment(Fragment fragment){

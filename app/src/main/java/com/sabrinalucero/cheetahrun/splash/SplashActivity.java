@@ -1,4 +1,4 @@
-package com.sabrinalucero.cheetahrun.Splash;
+package com.sabrinalucero.cheetahrun.splash;
 
 import android.content.Context;
 import android.content.Intent;
