@@ -4,18 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
 import com.sabrinalucero.cheetahrun.Utils.Util;
 import com.sabrinalucero.cheetahrun.R;
-import com.sabrinalucero.cheetahrun.fragments.MapFragment;
+import com.sabrinalucero.cheetahrun.fragments.RunMapFragment;
 import com.sabrinalucero.cheetahrun.fragments.WelcomeFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,35 +27,14 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-
     //accedemos al mismo archivo llamandolo del mismo modo
     prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-
-
-
 
     if (savedInstanceState == null){
       currentFragment = new WelcomeFragment();
       changeFragment(currentFragment);
       
     }
-
-
-
-
-    //Toast.makeText(this, "Called", Toast.LENGTH_LONG).show();
-
-   // esto para pasar con un boton de main al mapa
-    /*btn = (Button)findViewById(R.id.buttonMap);
-    btn.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        startActivity(intent);
-      }
-    });*/
-
-
 
   }
 
@@ -68,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
     //invocar al menu sino no va a aparecer
     getMenuInflater().inflate(R.menu.menu, menu);
     return super.onCreateOptionsMenu(menu);
-
-
   }
 
   @Override
@@ -88,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         break;
       case R.id.menu_map:
-        currentFragment = new MapFragment();
+        currentFragment = new RunMapFragment();
         break;
     }
 
@@ -106,6 +79,5 @@ public class MainActivity extends AppCompatActivity {
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
     startActivity(intent);
   }
-
 
 }
