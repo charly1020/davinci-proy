@@ -127,12 +127,19 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
   }
 
   private void startRunning() {
+    Context context = getContext();
+    CharSequence text = "Go Go";
+    int duration = Toast.LENGTH_SHORT;
+
+    Toast toast = Toast.makeText(context, text, duration);
+    toast.show();
+
     new Timer().schedule(new TimerTask() {
       @Override
       public void run() {
         updateLocation();
       }
-    }, 5000, 10);
+    }, 1000, 1);
   }
 
   private void updateLocation() {
