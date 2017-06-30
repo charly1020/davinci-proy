@@ -21,12 +21,26 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="15dp"
-        android:layout_marginEnd="11dp"
         android:clickable="true"
-        android:layout_gravity="bottom|end"
-        android:layout_marginRight="16dp"
+        android:layout_gravity="bottom|center"
         map:fabSize="mini"
         map:srcCompat="@android:drawable/ic_menu_compass" />
+
+    <Button
+        android:id="@+id/runId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Runing"
+        android:clickable="true"
+        android:layout_gravity="bottom|start"/>
+
+    <EditText
+        android:id="@+id/distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:ems="5"
+        android:inputType="textPersonName" />
 
 
 </FrameLayout>

@@ -1,9 +1,13 @@
 package com.sabrinalucero.cheetahrun.activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
 
   private SharedPreferences prefs;
   private Button btn;
+  private int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+  private int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION;
+
 
   Fragment currentFragment;
 
@@ -34,6 +41,20 @@ public class MainActivity extends AppCompatActivity {
       currentFragment = new WelcomeFragment();
       changeFragment(currentFragment);
       
+    }
+
+    // Here, thisActivity is the current activity
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+      System.out.println("usted no tiene permisos");
+      ActivityCompat.requestPermissions(this,
+              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+              MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+    }
+
+    if( ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(this,
+              new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+              MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
     }
 
   }

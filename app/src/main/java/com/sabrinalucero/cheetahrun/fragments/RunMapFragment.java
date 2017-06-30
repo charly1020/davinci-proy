@@ -3,6 +3,7 @@ package com.sabrinalucero.cheetahrun.fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -10,31 +11,50 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.sabrinalucero.cheetahrun.R;
 
-public class RunMapFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class RunMapFragment extends Fragment implements OnMapReadyCallback, LocationListener, LocationSource {
 
   private View rootView;
   private MapView mapView; //aqui se captura el layout
   private GoogleMap gMap;
-  private LocationManager locationManager;
   private static final long MIN_TIME = 400;
   private static final float MIN_DISTANCE = 1000;
+  private Timer myTimer;
 
+  private OnLocationChangedListener mListener;
+  private LocationManager locationManager;
+
+  private List<LatLng> points = new ArrayList<>();
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +63,13 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
     // Inflate the layout for this fragment
     rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
+    Button runNow = (Button) rootView.findViewById(R.id.runId);
+    runNow.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) {
+        startRunning();
+      }
+    });
+
 
     FloatingActionButton myFab = (FloatingActionButton) rootView.findViewById(R.id.floatingActionButton);
     myFab.setOnClickListener(new View.OnClickListener() {
@@ -50,25 +77,71 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
         checkIfGPSisEnabled();
       }
     });
+    locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
     return rootView;
   }
 
-  private void checkIfGPSisEnabled(){
+  @Override
+  public void onMapReady(GoogleMap googleMap) {
+
+    gMap = googleMap;
+
+    gMap.setLocationSource(this);
     try {
-      int gpsSignal = Settings.Secure.getInt(getActivity().getContentResolver(),Settings.Secure.LOCATION_MODE);
+      boolean gpsIsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-      if (gpsSignal == 0 ){
-        showInfoAlert();
-      } else {
-        LatLng place = new LatLng(-34.603684,-58.381559);
+      if (gpsIsEnabled) {
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place, 12.0f));
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this); //You can also use LocationManager.GPS_PROVIDER and LocationManager.PASSIVE_PROVIDER
+        gMap.setLocationSource(this);
 
       }
-    } catch (Settings.SettingNotFoundException e) {
-      e.printStackTrace();
+
+    } catch (SecurityException e) {
+      System.out.println(e);
     }
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+
+
+  }
+
+  private void checkIfGPSisEnabled(){
+    try {
+      boolean gpsIsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+      if (!gpsIsEnabled ){
+        showInfoAlert();
+      }
+
+    } catch (SecurityException e) {
+      System.out.println(e);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+  }
+
+  private void startRunning() {
+    new Timer().schedule(new TimerTask() {
+      @Override
+      public void run() {
+        updateLocation();
+      }
+    }, 5000, 10);
+  }
+
+  private void updateLocation() {
+    try {
+      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000L, 20F, this);
+    } catch(SecurityException e) {
+
+    }
+
   }
 
   private void showInfoAlert(){
@@ -97,33 +170,49 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
   }
 
   @Override
-  public void onMapReady(GoogleMap googleMap) {
+  public void onLocationChanged(Location location) {
 
-    gMap = googleMap;
-    LatLng place = new LatLng(-34.603684,-58.381559);
-    gMap.addMarker(new MarkerOptions().position(place).title("Im a marker in BA!"));
-    gMap.moveCamera(CameraUpdateFactory.newLatLng(place));
+    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+    gMap.animateCamera(cameraUpdate);
 
-    locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-    try {
-      int gpsSignal = Settings.Secure.getInt(getActivity().getContentResolver(),Settings.Secure.LOCATION_MODE);
+    MarkerOptions mo = new MarkerOptions().position(latLng);
+    mo.icon(BitmapDescriptorFactory.fromResource(R.drawable.small_blue));
 
-      if (gpsSignal == 0 ) {
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this); //You can also use LocationManager.GPS_PROVIDER and LocationManager.PASSIVE_PROVIDER
+    gMap.addMarker(mo);
+
+    points.add(latLng);
+
+    float distance = 0;
+
+    if(points.size() > 1) {
+      PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+
+
+      for (int z = 0; z < points.size(); z++) {
+
+        if(z!=0) {
+          float[] results = new float[1]; ;
+          double startLat = points.get(z-1).latitude;
+          double startLng = points.get(z-1).longitude;
+          double endLat = points.get(z).latitude;
+          double endLng = points.get(z).longitude;
+
+          Location.distanceBetween(startLat, startLng, endLat, endLng, results);
+          distance += results[0];
+        }
+        LatLng point = points.get(z);
+        options.add(point);
       }
-    } catch (SecurityException e) {
-
-    } catch (Settings.SettingNotFoundException e){
+      gMap.addPolyline(options);
 
     }
-  }
 
-  @Override
-  public void onLocationChanged(Location location) {
-    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
-    gMap.animateCamera(cameraUpdate);
-    locationManager.removeUpdates(this);
+    CharSequence text = distance + "mts";
+
+    EditText btn = (EditText) rootView.findViewById(R.id.distance);
+    btn.setText(text);
+
   }
 
   @Override
@@ -140,4 +229,17 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
   public void onProviderDisabled(String s) {
 
   }
+
+  @Override
+  public void activate(OnLocationChangedListener onLocationChangedListener) {
+    mListener = onLocationChangedListener;
+  }
+
+  @Override
+  public void deactivate() {
+    mListener = null;
+  }
+
+
+
 }
