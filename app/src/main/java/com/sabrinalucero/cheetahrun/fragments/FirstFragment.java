@@ -10,17 +10,18 @@ import android.view.ViewGroup;
 import com.sabrinalucero.cheetahrun.R;
 
 
-public class WelcomeFragment extends Fragment {
+public class FirstFragment extends Fragment {
 
 
-  public WelcomeFragment() {
+  public FirstFragment() {
   }
 
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_second, container, false);
+
+    View view = inflater.inflate(R.layout.fragment_first, container, false);
     return view;
   }
 

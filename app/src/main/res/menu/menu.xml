@@ -8,14 +8,8 @@
     <item android:id="@+id/menu_forget_logout"
           android:title="Forget and Log out"
           app:showAsAction="never"/>
-    <item android:id="@+id/menu_welcome"
-          android:title="Welcome"
-          app:showAsAction="always">
-    </item>
-
-    <item android:id="@+id/menu_map"
-          android:title="Go Map"
-          app:showAsAction="always">
-    </item>
+    <item android:id="@+id/menu_aboutMe"
+          android:title="@string/aboutMe"
+          app:showAsAction="never"/>
 
 </menu>
