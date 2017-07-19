@@ -84,6 +84,7 @@ public class LoginActivity  extends AppCompatActivity{
 
   }
 
+  //validaciones del login
   private boolean login(String email, String password){
     if(!isValidEmail(email)){
       Toast.makeText(this,"Email not valid, please try again. e.g juanito@correo.com",Toast.LENGTH_LONG).show();
@@ -96,6 +97,7 @@ public class LoginActivity  extends AppCompatActivity{
     }
   }
 
+  //guarda de info de preferencias
   private void saveOnPreferences(String email, String password){
     if (switchRemember.isChecked()){
       //write instance

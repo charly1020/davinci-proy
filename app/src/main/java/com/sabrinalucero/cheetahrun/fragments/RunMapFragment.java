@@ -54,6 +54,7 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
   private OnLocationChangedListener mListener;
   private LocationManager locationManager;
 
+  //para dibujar en el mapa
   private List<LatLng> points = new ArrayList<>();
 
   @Override
@@ -142,8 +143,10 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
     }, 1000, 1);
   }
 
+
   private void updateLocation() {
     try {
+      //TODO buscar que hace cada parametro dentro de location manager
       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000L, 20F, this);
     } catch(SecurityException e) {
 
@@ -151,6 +154,7 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
 
   }
 
+  //activar gps del dispositivo
   private void showInfoAlert(){
     new AlertDialog.Builder(getContext())
       .setTitle("GPS Signal")
@@ -171,6 +175,7 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
   public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+
     final SupportMapFragment mapFragment = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map);
     mapFragment.getMapAsync(this);
 
@@ -180,6 +185,7 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
   public void onLocationChanged(Location location) {
 
     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+    //vista del mapa, el nro indica la altura desde la que se ve el mapa 1 por ej es a nivel tierra, 5 pais
     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
     gMap.animateCamera(cameraUpdate);
 
@@ -192,6 +198,7 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
 
     float distance = 0;
 
+    //dibujan el recorrido
     if(points.size() > 1) {
       PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
 
@@ -217,6 +224,7 @@ public class RunMapFragment extends Fragment implements OnMapReadyCallback, Loca
 
     CharSequence text = distance + "mts";
 
+    //probar cambiar que el edit text por un texto que muestre solo los km
     EditText btn = (EditText) rootView.findViewById(R.id.distance);
     btn.setText(text);
 

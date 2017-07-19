@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
   private int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION;
 
 
+
   Fragment currentFragment;
 
 
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     return super.onCreateOptionsMenu(menu);
   }
 
+  //menu toolbar
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
   private void logOut(){
 
     Intent intent = new Intent(this, LoginActivity.class);
+    //flag para no volver al login, tambien se puede hacer con el metodo finish()
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
     startActivity(intent);
   }
