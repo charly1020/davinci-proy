@@ -12,7 +12,6 @@ import com.sabrinalucero.cheetahrun.R;
 
 public class FirstFragment extends Fragment {
 
-
   public FirstFragment() {
   }
 
@@ -20,9 +19,10 @@ public class FirstFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-
     View view = inflater.inflate(R.layout.fragment_first, container, false);
+
     return view;
   }
+
 
 }
